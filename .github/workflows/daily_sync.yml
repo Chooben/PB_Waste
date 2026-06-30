@@ -1,0 +1,28 @@
+name: Sync DB
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  sync:
+    runs-on: ubutuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run sync script
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python script.py
