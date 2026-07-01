@@ -25,4 +25,5 @@ jobs:
       - name: Run sync script
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GOOGLE_SHEET: ${{ secrets.GOOGLE_SHEET }}
         run: python script.py
