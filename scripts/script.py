@@ -20,7 +20,7 @@ df_gs.to_sql("test_daily_waste", engine, if_exists="append", index=False)
 with engine.connect() as conn:
     df = pd.read_sql(text("""
         SELECT w.*, p.category, p.core
-        FROM test_daily_waste w
+        FROM daily_waste w
         LEFT JOIN pastries p ON w.name = p.name
         ORDER BY date ASC
     """), conn)
@@ -40,7 +40,7 @@ print(avg_day)
 with engine.begin() as conn:
     for _, row in avg_day.iterrows():
         conn.execute(text("""
-            UPDATE avg_day_test
+            UPDATE avg_day
             SET waste = :waste
             WHERE day = :day
             """), {"day": row.day, "waste": row.waste}
