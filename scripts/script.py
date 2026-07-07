@@ -15,7 +15,7 @@ engine = create_engine(DATABASE_URL)
 df_gs = pd.read_csv(SHEETS_URL)
 print(df_gs)
 
-df_gs.to_sql("test_daily_waste", engine, if_exists="append", index=False)
+df_gs.to_sql("daily_waste", engine, if_exists="append", index=False)
 
 with engine.connect() as conn:
     df = pd.read_sql(text("""
