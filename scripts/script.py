@@ -25,9 +25,9 @@ with engine.connect() as conn:
         ORDER BY date ASC
     """), conn)
 
-df_gs['date'] = pd.to_datetime(df['date'])
-df_gs['day'] =  pd.Categorical(df['date'].dt.day_name(), categories=days_order, ordered=True)
-df_gs['week_num'] = (df['date'] - df['date'].min()).dt.days //7 + 1
+df_gs['date'] = pd.to_datetime(df_gs['date'])
+df_gs['day'] =  pd.Categorical(df_gs['date'].dt.day_name(), categories=days_order, ordered=True)
+df_gs['week_num'] = (df_gs['date'] - df['date'].min()).dt.days //7 + 1
 
 df_gs[["week_num","day", "date", "name", "waste"]].to_sql("stg_waste",engine, if_exists="append", index=False)
 
