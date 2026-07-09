@@ -25,9 +25,11 @@ with engine.connect() as conn:
         ORDER BY date ASC
     """), conn)
 
-df['date'] = pd.to_datetime(df['date'])
-df['day'] =  pd.Categorical(df['date'].dt.day_name(), categories=days_order, ordered=True)
-df['week_num'] = (df['date'] - df['date'].min()).dt.days //7 + 1
+df_gs['date'] = pd.to_datetime(df['date'])
+df_gs['day'] =  pd.Categorical(df['date'].dt.day_name(), categories=days_order, ordered=True)
+df_gs['week_num'] = (df['date'] - df['date'].min()).dt.days //7 + 1
+
+df_gs[["week_num","day", "date", "name", "waste"]].to_sql("stg_waste",engine, if_exists="append", index=False)
 
 avg_day = (
     df.groupby(["date", "day"])["waste"].sum()
