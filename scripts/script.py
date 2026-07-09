@@ -1,11 +1,11 @@
 import os
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import create_engine, text
 
 days_order = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday", "Saturday", "Sunday"]
 
-#load_dotenv()
+load_dotenv()
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 SHEETS_URL = os.environ["GOOGLE_SHEET"]
@@ -25,11 +25,16 @@ with engine.connect() as conn:
         ORDER BY date ASC
     """), conn)
 
+df['date'] = pd.to_datetime(df['date'])
+df['day'] = pd.Categorical(df['date'].dt.day_name(), categories=days_order, ordered=True)
+
 df_gs['date'] = pd.to_datetime(df_gs['date'])
 df_gs['day'] =  pd.Categorical(df_gs['date'].dt.day_name(), categories=days_order, ordered=True)
 df_gs['week_num'] = (df_gs['date'] - df['date'].min()).dt.days //7 + 1
 
-df_gs[["week_num","day", "date", "name", "waste"]].to_sql("stg_waste",engine, if_exists="append", index=False)
+df_gs[["week_num", "day", "date", "name", "waste"]].to_sql("stg_waste", engine, if_exists="append", index=False)
+
+print(df_gs)
 
 avg_day = (
     df.groupby(["date", "day"])["waste"].sum()
