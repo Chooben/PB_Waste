@@ -13,9 +13,10 @@ SHEETS_URL = os.environ["GOOGLE_SHEET"]
 engine = create_engine(DATABASE_URL)
 
 df_gs = pd.read_csv(SHEETS_URL)
+df_gs['date'] = pd.to_datetime(df_gs['date'])
 print(df_gs)
 
-df_gs.to_sql("daily_waste", engine, if_exists="append", index=False)
+df_gs.assign(date=df_gs["date"].dt.date).to_sql("daily_waste", engine, if_exists="append", index=False)
 
 with engine.connect() as conn:
     df = pd.read_sql(text("""
@@ -36,7 +37,7 @@ pastries = dict(zip(df_p["name"], df_p["core"]))
 df['date'] = pd.to_datetime(df['date'])
 df['day'] = pd.Categorical(df['date'].dt.day_name(), categories=days_order, ordered=True)
 
-df_gs['date'] = pd.to_datetime(df_gs['date'])
+
 df_gs['day'] =  pd.Categorical(df_gs['date'].dt.day_name(), categories=days_order, ordered=True)
 df_gs['week_num'] = (df_gs['date'] - df['date'].min()).dt.days //7 + 1
 
